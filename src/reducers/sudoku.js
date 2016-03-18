@@ -47,7 +47,7 @@ function combineMovesWithData(data,moves){
 
   moves.forEach((m)=>{
     combinedBoard[m.index] = {
-      value: m.value,
+      value: m.value < 10 ? m.value.toString() : String.fromCharCode(87+m.value),
       locked: false,
       invalid: !hexSodokuSolver.validateMove(updatedData,m.index,m.value)
     }
@@ -125,7 +125,8 @@ export default function sudoku(state = initialState, action) {
 
     case SHOW_SOLUTION:
       let res = hexSodokuSolver.solveWrapper(state.data)
-      let board = res ? createBoard(state.initialData, res) :
+      console.log(res)
+      let board = res ? createBoard(res, state.initialData) :
                         createBoard(state.initialData, state.initialData)
       return {...state, board}
 
@@ -140,6 +141,8 @@ export default function sudoku(state = initialState, action) {
 
     case SHOW_HINT:
       return state
+
+
 
     default:
       return state

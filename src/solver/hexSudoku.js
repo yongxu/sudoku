@@ -65,8 +65,9 @@ function shuffle(list) {
 export function solveWrapper(boardData){
   let data = boardData.slice()
   let counter = 0
+
   function solve(index){
-    if (counter++ > 1000000) return data
+    if (counter++ > 2000000) return data
 
     let lastValue = data[index]
 
@@ -83,19 +84,18 @@ export function solveWrapper(boardData){
     if(possibleFit.length === 0) return null
 
     for (let value of possibleFit){
-      for (let nextIndex in data){
-        if (data[nextIndex] >=0 ) continue
-        data[index] = value
-        let res = solve(nextIndex)
-        if (res) {
-          return res
-        }
-        data[index] = lastValue //back trace
+      data[index] = value
+      let nextIndex = data.findIndex((v)=>v<0)
+      let res = solve(nextIndex)
+      if (res) {
+        return res
       }
     }
+    data[index] = lastValue //back track, reset to last value
 
     return null
   }
+
   let list = []
   for (let index in data){
     let value = data[index]
@@ -104,14 +104,33 @@ export function solveWrapper(boardData){
     } else {
       data[index] = -1
       let valid = validateMove(data, index, value)
+      if (!valid) {
+        const row = ~~(index / 16)
+        const col = index % 16
+
+        let rowValues = possibleRowValues(data,row)
+        let colValues = possibleColValues(data,col)
+        let subGridValues = possibleSubGridValues(data,row,col)
+
+        console.log(row)
+        console.log(col)
+        console.log(value)
+
+        console.log(rowValues)
+        console.log(colValues)
+        console.log(subGridValues)
+        return null
+      }
       data[index] = value
-      if (!valid) return null
     }
   }
   list = shuffle(list)
-  for (let index of list){
-    let res = solve(index)
-    if (res) return res
-  }
+  let res = solve(list[0])
+  if (res) return res
+
+  // for (let index of list){
+  //   let res = solve(index)
+  //   if (res) return res
+  // }
   return null
 }
