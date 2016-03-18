@@ -1,0 +1,59 @@
+.sudoku{
+  table {
+    border-collapse: collapse;
+    margin:1em auto;
+  }
+  td {
+    height:30px;
+    width:30px;
+    border:1px solid;
+    padding: 0;
+    text-align:center;
+    font-size: 13px;
+  }
+  input {
+    padding: 0;
+    margin: 0;
+    border: 0;
+    width: inherit;
+    height: inherit;
+    text-align: center;
+    font-size: 13px;
+  }
+  .hint{
+    height: 1em;
+  }
+}
+
+th {
+  padding: 0;
+}
+.sudokuBoard{
+  td:first-child {
+    border-left:solid;
+  }
+  td:nth-child(3n) {
+    border-right:solid;
+  }
+  tr:first-child {
+    border-top:solid;
+  }
+  tr:nth-child(3n) td {
+    border-bottom:solid;
+  }
+}
+
+.hexSudokuBoard{
+  td:first-child {
+    border-left:solid;
+  }
+  td:nth-child(4n) {
+    border-right:solid;
+  }
+  tr:first-child {
+    border-top:solid;
+  }
+  tr:nth-child(4n) td {
+    border-bottom:solid ;
+  }
+}
