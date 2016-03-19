@@ -8,6 +8,7 @@ import {deepOrange500} from 'material-ui/lib/styles/colors'
 import FlatButton from 'material-ui/lib/flat-button'
 import getMuiTheme from 'material-ui/lib/styles/getMuiTheme'
 import MuiThemeProvider from 'material-ui/lib/MuiThemeProvider'
+import Toggle from 'material-ui/lib/toggle';
 
 import SudokuBoard from '../components/SudokuBoard'
 import * as SudokuActions from '../actions'
@@ -76,8 +77,25 @@ class App extends React.Component {
               style={{marginLeft:'30px'}}
               label="Solve"
               primary={true}
-              onTouchTap={()=>actions.showSolution()}
+              onTouchTap={()=>actions.solve()}
             />
+          </div>
+          <div>
+            <span>
+              <Toggle
+                label="Hex Mode"
+                style={{
+                  maxWidth: 140,
+                  toggle: {
+                    marginBottom: 16,
+                  },
+                }}
+                toggled={sudoku.mode === 'HEXSUDOKU_MODE'}
+                onToggle={(e)=>{
+                  actions.switchMode()
+                }}
+              />
+            </span>
           </div>
           <h2 className="hint">{sudoku.hint}</h2>
         </div>

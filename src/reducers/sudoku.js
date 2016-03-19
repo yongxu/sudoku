@@ -12,8 +12,6 @@ import {
   CLEAR_BOARD,
 } from '../constants/ActionTypes'
 
-import * as hexSodokuSolver from '../solver/hexSudoku'
-
 const initialState ={
   gameIndex: '',
   initialData: [],
@@ -23,6 +21,7 @@ const initialState ={
   hint: '',
   moves: [],
   time: 0,
+  mode: HEXSUDOKU_MODE
 }
 
 function createBoard(boardData, lockedData){
@@ -49,7 +48,7 @@ function combineMovesWithData(data,moves){
     combinedBoard[m.index] = {
       value: m.value < 10 ? m.value.toString() : String.fromCharCode(87+m.value),
       locked: false,
-      invalid: !hexSodokuSolver.validateMove(updatedData,m.index,m.value)
+      invalid: !SodokuSolver.validateMove(updatedData,m.index,m.value)
     }
     updatedData[m.index] = m.value
   })
@@ -68,11 +67,14 @@ function cellInputToNumber(n){
 export default function sudoku(state = initialState, action) {
   switch (action.type) {
     case NEW_GAME:
+      const mode = action.mode || state.mode
       if (action.gameIndex) {
         return state
       }
       else if (action.empty) {
-        const initialData = new Array(256).fill(-1)
+        const initialData = mode === HEXSUDOKU_MODE ?
+                              new Array(256).fill(-1) :
+                              new Array(81).fill(-1)
         const board = createBoard(initialData,initialData)
         return {
           ...state,
@@ -81,11 +83,20 @@ export default function sudoku(state = initialState, action) {
           board,
           solution: null,
           moves: [],
-          time: 0
+          time: 0,
+          mode
         }
       }
       else {
-        const game = JSON.parse(require('raw!../../data/hexSudoku/game1.json'))
+        let game
+        switch (mode) {
+          case SUDOKU_MODE:
+            game = JSON.parse(require('raw!../../data/sudoku/game1.json'))
+            break
+          case HEXSUDOKU_MODE:
+            game = JSON.parse(require('raw!../../data/hexSudoku/game1.json'))
+          default:
+        }
         const initialData = game.initialData
         const board = createBoard(initialData,initialData)
         return {
@@ -95,7 +106,8 @@ export default function sudoku(state = initialState, action) {
           board,
           solution: null,
           moves: [],
-          time: 0
+          time: 0,
+          mode
         }
       }
     case RESTART:
@@ -124,8 +136,8 @@ export default function sudoku(state = initialState, action) {
       return state
 
     case SHOW_SOLUTION:
-      let res = hexSodokuSolver.solveWrapper(state.data)
-      console.log(res)
+      let res = action.data
+      //console.log(res)
       let board = res ? createBoard(res, state.initialData) :
                         createBoard(state.initialData, state.initialData)
       return {...state, board}
@@ -141,8 +153,6 @@ export default function sudoku(state = initialState, action) {
 
     case SHOW_HINT:
       return state
-
-
 
     default:
       return state
